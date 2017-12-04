@@ -1,46 +1,34 @@
 import { initialize } from '../utils/store'
 import path from 'path'
 import express from 'express'
-var router  = express.Router();
+import { getUserRating, getAllUserRating, increaseUserRating } from './rating'
 
-const store = initialize(path.basename(__dirname));
+const router  = express.Router();
 
-const increaseRating = async (userId) => {
-  const rating = await store.findDocByFieldValue("rating", 'userId', userId);
-
-  if(rating.length === 0) {
-    return store.addWithId("rating", { userId, rating: 1 }, userId);
-  } else {
-    let newRating = rating[0].rating + 1;
-    const ret = await store.update("rating", { userId, rating: newRating }, userId);
-    return ret;
-  }
+const makeResult = (result) => {
+    const data = { result };
+    return JSON.stringify(data);
 }
+
 
 router.put('/users/:userId', async (req, res, next) => {
   const userId = req.params.userId;
-  const id = await increaseRating(userId);
+  const result = await increaseUserRating(userId);
   res.writeHead(200, {'Content-Type': 'application/json'});
-  res.end(`{"id": "${id}"}`);
-  next();
+  res.end(makeResult(result));
 });
 
 router.get('/users/:userId', async (req, res, next) => {
   const userId = req.params.userId;
-  const result = await store.findDocByFieldValue("rating", "userId", userId);
-  console.log(result)
+  const result = await getUserRating(userId);
   res.writeHead(200, {'Content-Type': 'application/json'});
-  const data = { result };
-
-  res.end(JSON.stringify(data));
+  res.end(makeResult(result));
 });
 
 router.get('/users', async (req, res, next) => {
-  const result = await store.findAll("rating");
+  const result = await getAllUserRating();
   res.writeHead(200, {'Content-Type': 'application/json'});
-  const data = { result };
-
-  res.end(JSON.stringify(data));
+  res.end(makeResult(result));
 });
 
 module.exports = router;
