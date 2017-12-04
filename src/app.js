@@ -1,12 +1,13 @@
-const express = require('express');
-const rating = require('./rating-service');
-const profile = require('./profile-service');
-const user = require('./user-service');
-const jobRef = require('./job-reference-service');
-const loop = require('./loop-service');
-var app = express();
 import http from 'http'
 import debug from 'debug'
+import express from 'express'
+import rating from './rating-service'
+import profile from './profile-service'
+import user from  './user-service'
+import jobRef from './job-reference-service'
+import loop from './loop-service'
+
+var app = express();
 
 app.use('/rating', rating);
 app.use('/profile', profile);

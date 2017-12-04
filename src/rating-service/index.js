@@ -10,7 +10,6 @@ const makeResult = (result) => {
     return JSON.stringify(data);
 }
 
-
 router.put('/users/:userId', async (req, res, next) => {
   const userId = req.params.userId;
   const result = await increaseUserRating(userId);
